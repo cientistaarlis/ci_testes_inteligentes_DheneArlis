@@ -1,6 +1,5 @@
 # =============================================================================
 # PIPELINE 1 — Testes Manuais (sem IA)
-# Arquivo: .github/workflows/pipeline-manual.yml
 #
 # O que esta pipeline faz:
 #   1. É acionada automaticamente em push em branches de feature

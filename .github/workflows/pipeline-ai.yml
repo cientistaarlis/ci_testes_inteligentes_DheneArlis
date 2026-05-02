@@ -1,11 +1,9 @@
 # =============================================================================
 # PIPELINE 2 — Testes com Suporte de IA
-# Arquivo: .github/workflows/pipeline-ai.yml
-#
+# 
 # Diferenças em relação à Pipeline 1:
 #   - Executa os testes da pasta tests/ai/
-#   - Roda em paralelo com a pipeline-manual quando há push/PR
-#   - Os testes cobrem mais cenários (gerados pela IA)
+#   - Roda em paralelo com a pipeline-manual 
 # =============================================================================
 
 name: "Pipeline 2 — Testes com IA"
