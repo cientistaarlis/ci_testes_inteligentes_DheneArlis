@@ -1,0 +1,99 @@
+================================================================
+ROTEIRO DO RELATÓRIO TÉCNICO — O QUE ESCREVER EM CADA PARTE
+================================================================
+(Este arquivo é só para você — não vai para o GitHub)
+Lembre: máximo 2 páginas, escrito à mão, digitalizado em PDF.
+================================================================
+
+
+CABEÇALHO (no topo da folha)
+─────────────────────────────
+Título:    Pipelines de CI e Automação de Testes com e sem IA
+Disciplina: [nome da disciplina]
+Aluno:     [seu nome completo]
+Data:      [data de entrega]
+
+
+════════════════════════════════════════
+SEÇÃO 1 — INTRODUÇÃO  (~4 a 6 linhas)
+════════════════════════════════════════
+
+Escreva respondendo estas perguntas:
+
+  a) Qual é o objetivo da atividade?
+     Sugestão: "O objetivo desta atividade foi implementar duas pipelines
+     de integração contínua (CI) usando GitHub Actions, uma com testes
+     escritos manualmente e outra com testes gerados com auxílio de IA."
+
+  b) Quais ferramentas foram escolhidas e por quê?
+     Sugestão: "Foram utilizados Python e Playwright por serem ferramentas
+     modernas, bem documentadas e compatíveis com o conhecimento prévio
+     em Python. O site automationexercise.com foi escolhido por ser uma
+     aplicação pública criada especificamente para prática de automação,
+     com login, cadastro e navegação por categorias."
+
+  c) Qual recurso de IA foi usado?
+     Sugestão: "O Claude (Anthropic) foi utilizado para geração de casos
+     de teste, sugestão de cenários negativos e estruturação do código
+     com pytest.mark.parametrize."
+
+
+════════════════════════════════════════════════
+SEÇÃO 2 — ANÁLISE CRÍTICA  (~10 a 14 linhas)
+════════════════════════════════════════════════
+
+Compare as duas abordagens em 3 pontos:
+
+  PONTO 1 — Cobertura de testes
+  ──────────────────────────────
+  Testes manuais: cobriram apenas o "caminho feliz" (fluxo que funciona).
+  Testes com IA: cobriram também cenários negativos (dados inválidos,
+  campos vazios), resultando em maior cobertura com o mesmo esforço.
+
+  PONTO 2 — Tempo de implementação
+  ──────────────────────────────────
+  Os testes manuais exigiram mais tempo de análise e escrita por parte
+  do desenvolvedor. Os testes com IA foram mais rápidos de estruturar,
+  pois a IA sugeriu a lógica parametrizada que cobre múltiplos casos
+  em uma única função de teste.
+
+  PONTO 3 — Qualidade do código
+  ──────────────────────────────
+  A IA sugeriu padrões mais avançados (fixtures, parametrização),
+  que melhoram a manutenibilidade. Porém, o código gerado precisou
+  de revisão e ajustes manuais para se adequar ao site-alvo.
+
+
+════════════════════════════════════════════
+SEÇÃO 3 — CONCLUSÃO  (~8 a 10 linhas)
+════════════════════════════════════════════
+
+Aborde os 4 pontos abaixo, um ou dois em cada parágrafo:
+
+  VANTAGENS da IA em testes:
+  - Gera casos de teste negativos que humanos tendem a esquecer
+  - Acelera a criação da estrutura inicial dos testes
+  - Sugere boas práticas de código (parametrização, fixtures)
+
+  LIMITAÇÕES da IA:
+  - Não conhece o site-alvo: os seletores (ex: data-qa="login-email")
+    precisaram ser descobertos manualmente ou com inspeção do HTML
+  - O código gerado nem sempre funciona sem ajustes
+  - A IA não substitui o entendimento do testador sobre o sistema
+
+  DIFICULDADES encontradas:
+  - Configurar o GitHub Actions pela primeira vez sem experiência prévia
+  - Entender o modo headless (sem interface gráfica) exigido no CI
+  - Ajustar credenciais de teste para o site funcionar corretamente
+
+  SUGESTÕES DE MELHORIA FUTURA:
+  - Integrar Healenium para auto-correção de seletores quebrados
+  - Usar GitHub Secrets para proteger as credenciais de teste no CI
+  - Adicionar testes de carga com Locust para complementar os E2E
+
+
+================================================================
+DICA FINAL: Escreva com suas próprias palavras.
+Use este roteiro como guia, não copie palavra por palavra.
+O professor avalia se você entendeu — não se copiou bem.
+================================================================

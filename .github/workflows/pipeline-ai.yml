@@ -1,0 +1,96 @@
+# =============================================================================
+# PIPELINE 2 — Testes com Suporte de IA
+# Arquivo: .github/workflows/pipeline-ai.yml
+#
+# Diferenças em relação à Pipeline 1:
+#   - Executa os testes da pasta tests/ai/
+#   - Roda em paralelo com a pipeline-manual quando há push/PR
+#   - Os testes cobrem mais cenários (gerados pela IA)
+# =============================================================================
+
+name: "Pipeline 2 — Testes com IA"
+
+on:
+  push:
+    branches-ignore:
+      - main
+      - master
+
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  testes-com-ia:
+    name: "Executar testes gerados com IA"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Checkout do repositório"
+        uses: actions/checkout@v4
+
+      - name: "Configurar Python 3.11"
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: "Cache das dependências pip"
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: "Instalar dependências Python"
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: "Cache dos browsers Playwright"
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('requirements.txt') }}
+
+      - name: "Instalar Chromium (Playwright)"
+        run: playwright install chromium --with-deps
+
+      # -------------------------------------------------------------------
+      # Executa os testes com IA
+      # Nota: os testes parametrizados do login_ai.py rodam 4 cenários
+      #       automaticamente a partir de uma única função de teste
+      # -------------------------------------------------------------------
+      - name: "Executar testes com IA"
+        run: |
+          echo "================================================"
+          echo "  Iniciando execução dos testes gerados com IA"
+          echo "================================================"
+          pytest tests/ai/ \
+            --browser=chromium \
+            -v \
+            --tb=short \
+            --html=test-results/report-ai.html \
+            --self-contained-html \
+            --screenshot=only-on-failure \
+            --output=test-results/screenshots-ai
+          echo "================================================"
+          echo "  RESULTADO: PASSED"
+          echo "================================================"
+
+      - name: "Publicar relatório e screenshots"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "resultados-testes-ia"
+          path: test-results/
+          retention-days: 7
+
+      - name: "Exibir resultado final"
+        if: failure()
+        run: |
+          echo "================================================"
+          echo "  RESULTADO: FAILED — verifique os artefatos"
+          echo "================================================"
+          exit 1

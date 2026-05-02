@@ -1,0 +1,128 @@
+# =============================================================================
+# PIPELINE 1 — Testes Manuais (sem IA)
+# Arquivo: .github/workflows/pipeline-manual.yml
+#
+# O que esta pipeline faz:
+#   1. É acionada automaticamente em push em branches de feature
+#      e em Pull Requests direcionados à branch main
+#   2. Instala Python e as dependências do projeto (com cache)
+#   3. Instala o browser Chromium do Playwright
+#   4. Executa APENAS os testes da pasta tests/manual/
+#   5. Publica screenshots e relatório HTML como artefatos
+#   6. Exibe PASSED ou FAILED de forma clara nos logs
+# =============================================================================
+
+name: "Pipeline 1 — Testes Manuais"
+
+on:
+  # Dispara em push para qualquer branch EXCETO main/master
+  push:
+    branches-ignore:
+      - main
+      - master
+
+  # Dispara em Pull Requests direcionados à main/master
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  testes-manuais:
+    name: "Executar testes manuais"
+    runs-on: ubuntu-latest   # Máquina virtual Linux gratuita do GitHub
+
+    steps:
+      # -------------------------------------------------------------------
+      # 1. Baixa o código do repositório para a máquina virtual
+      # -------------------------------------------------------------------
+      - name: "Checkout do repositório"
+        uses: actions/checkout@v4
+
+      # -------------------------------------------------------------------
+      # 2. Instala Python 3.11
+      # -------------------------------------------------------------------
+      - name: "Configurar Python 3.11"
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # -------------------------------------------------------------------
+      # 3. Cache das dependências pip — acelera execuções futuras
+      #    (Se requirements.txt não mudou, usa a versão salva em cache)
+      # -------------------------------------------------------------------
+      - name: "Cache das dependências pip"
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      # -------------------------------------------------------------------
+      # 4. Instala as dependências Python
+      # -------------------------------------------------------------------
+      - name: "Instalar dependências Python"
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # -------------------------------------------------------------------
+      # 5. Instala o browser Chromium do Playwright
+      #    (com cache para não baixar toda vez)
+      # -------------------------------------------------------------------
+      - name: "Cache dos browsers Playwright"
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('requirements.txt') }}
+
+      - name: "Instalar Chromium (Playwright)"
+        run: playwright install chromium --with-deps
+
+      # -------------------------------------------------------------------
+      # 6. Executa os testes manuais
+      #    --browser=chromium   = usa Chromium
+      #    --headed não está aqui = modo headless (sem janela, obrigatório no CI)
+      #    -v                   = verbose (mostra cada teste)
+      #    --tb=short           = traceback curto em caso de falha
+      # -------------------------------------------------------------------
+      - name: "Executar testes manuais"
+        run: |
+          echo "================================================"
+          echo "  Iniciando execução dos testes manuais..."
+          echo "================================================"
+          pytest tests/manual/ \
+            --browser=chromium \
+            -v \
+            --tb=short \
+            --html=test-results/report-manual.html \
+            --self-contained-html \
+            --screenshot=only-on-failure \
+            --output=test-results/screenshots
+          echo "================================================"
+          echo "  RESULTADO: PASSED"
+          echo "================================================"
+
+      # -------------------------------------------------------------------
+      # 7. Publica artefatos mesmo se os testes falharem (always())
+      #    Retidos por 7 dias conforme especificado na atividade
+      # -------------------------------------------------------------------
+      - name: "Publicar relatório e screenshots"
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "resultados-testes-manuais"
+          path: test-results/
+          retention-days: 7
+
+      # -------------------------------------------------------------------
+      # 8. Exibe resultado final claro nos logs
+      # -------------------------------------------------------------------
+      - name: "Exibir resultado final"
+        if: failure()
+        run: |
+          echo "================================================"
+          echo "  RESULTADO: FAILED — verifique os artefatos"
+          echo "================================================"
+          exit 1

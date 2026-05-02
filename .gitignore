@@ -1,0 +1,26 @@
+# Dependências Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+venv/
+.env
+
+# Resultados de testes (gerados localmente — no CI viram artefatos)
+test-results/
+playwright-report/
+*.html
+
+# Playwright
+/node_modules/
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
