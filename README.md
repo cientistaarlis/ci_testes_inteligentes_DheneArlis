@@ -107,8 +107,6 @@ pytest tests/ -v --headed
 | Pipeline 1 | `pipeline-manual.yml` | `tests/manual/` | Push em branch de feature ou PR para main |
 | Pipeline 2 | `pipeline-ai.yml` | `tests/ai/` | Push em branch de feature ou PR para main |
 
-Os artefatos (screenshots de falha + relatório HTML) ficam disponíveis por **7 dias** em cada execução.
-
 ---
 
 ## Sobre os testes
